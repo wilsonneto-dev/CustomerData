@@ -23,13 +23,14 @@
         var json = this.get_data();
         var ajax = new XMLHttpRequest();
 
-        ajax.open("POST", "minha-url-api", true);
+        ajax.open("POST", "http://localhost:54468/api/values", true);
         ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        ajax.send(json);
+        // ajax.send(json);
 
         ajax.onreadystatechange = function () {
             if (ajax.readyState == 4 && ajax.status == 200) {
                 console.log("Dados enviados. Status: " + ajax.status);
+                console.log("Json Pack: " + json);
             }
         }
 
