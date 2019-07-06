@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29025.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerData", "CustomerData\CustomerData.csproj", "{22E0F2BA-3139-4F10-9504-E31C7BF62504}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerDataColectAPI", "CustomerDataColectAPI\CustomerDataColectAPI.csproj", "{65FFD74F-8C42-4965-B54D-7C9811750F2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerDataColectAPI", "CustomerDataColectAPI\CustomerDataColectAPI.csproj", "{65FFD74F-8C42-4965-B54D-7C9811750F2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerDataPersistenceRobot", "CustomerDataPersistenceRobot\CustomerDataPersistenceRobot.csproj", "{19E05EA9-151F-4ECF-A773-8311F2674FA6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{65FFD74F-8C42-4965-B54D-7C9811750F2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65FFD74F-8C42-4965-B54D-7C9811750F2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65FFD74F-8C42-4965-B54D-7C9811750F2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19E05EA9-151F-4ECF-A773-8311F2674FA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19E05EA9-151F-4ECF-A773-8311F2674FA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19E05EA9-151F-4ECF-A773-8311F2674FA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19E05EA9-151F-4ECF-A773-8311F2674FA6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
