@@ -1,0 +1,65 @@
+body{ margin: 0; padding: 0; }
+
+.box {
+	margin: 0 auto;
+	width: 100%;
+	max-width: 980px;
+}
+
+header, footer {
+	background-color: #333;
+	color: #fff;
+	text-align: center;
+	padding-bottom: 10px;
+}
+	header hgroup{
+		padding: 10px;
+	}
+	header nav {
+		background-color: #232323; 
+		color: #C0BAB6;
+		display: inline-block;
+	}
+		header nav a {
+			padding: 10px;
+			text-decoration: none;
+			color: #C0BAB6;
+			display: inline-block;
+		}
+		header nav a:hover {background-color: #131313;}
+
+.banner img { width: 100%; }
+
+.main { margin: 10px auto; text-align: center;}
+.one_third { display: inline-block; width: 33%; color: #404040; }
+
+.one_third figure {padding: 5px; border: 1px solid #ddd; margin: 5px 2px; }
+.one_third img { width: 100%; }
+.more { text-align: right; }
+.more a { background-color: #999; text-decoration: none; color: #ffffff; display: inline-block; padding: 5px;}
+
+.no-margin, .one_third h2, .one_third p { list-style: none; margin: 0; padding: 0; }
+.no-margin li { display: inline-block; }
+
+footer { padding: 20px; }
+
+.landing { }
+.half { display: inline-block; width: 49%; vertical-align: top; text-align: left; }
+.half img { width: 100%; }
+.text-right {text-align: right;}
+
+.main form { max-width: 500px; margin: 0 auto;}
+	.main form .field { margin-top: 10px; }
+.main form label{ font-weight: 900; }
+.main form input, .main form label { 
+	display: block; 
+	text-align: left;
+	width: 100%; 
+	display: block;
+}
+
+@media only screen and (max-width: 600px) {
+	.one_third { display: inline-block; width: 90%; color: #404040; }
+	.half { width: 90%; margin-left: auto; margin-right: auto; }
+	.main form { width: 90%; margin: 0 auto;}
+}

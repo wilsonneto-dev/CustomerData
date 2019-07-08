@@ -42,7 +42,7 @@ namespace CustomerDataColectAPI
             }
 
             // app.UseHttpsRedirection();
-            app.UseCors();
+            app.UseCors(option => option.AllowAnyOrigin());
             app.UseMvc();
         }
     }

@@ -1,7 +1,9 @@
 ﻿using CustomerDataPersistenceRobot.Context;
 using CustomerDataPersistenceRobot.Models;
-using CustomerDataPersistenceRobot.Utility;
 using System;
+using Couchbase;
+using Couchbase.Authentication;
+using System.Collections.Generic;
 
 namespace CustomerDataPersistenceRobot
 {
@@ -9,25 +11,13 @@ namespace CustomerDataPersistenceRobot
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-            // QueueRabbitMQ.QueueConsume();
+            // log
+            Console.WriteLine("Initializing...");
 
-            using (var context = new CustomerDataDbContext())
-            {
-
-                CustomerNavigation customerNavigation = new CustomerNavigation()
-                {
-                    IP = "x",
-                    Date = DateTime.Now,
-                    PageTitle = "Teste",
-                    Params = "Params"
-                };
-
-                context.CustomerNavigations.Add(customerNavigation);
-                context.SaveChanges();
-            }
-
-            Console.WriteLine("Ok... Press [enter] to exit");
+            // initialize queue  consuming
+            Services.Queue.QueueStartConsuming();
+            
+            Console.WriteLine("Press [enter] to exit.");
             Console.ReadLine();
 
         }
