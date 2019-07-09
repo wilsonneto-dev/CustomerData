@@ -27,9 +27,16 @@ namespace CustomerDataQueryAPI.Services
                     // where clausules based on received parameters
                     String whereClausules = "";
                     if (!String.IsNullOrEmpty(pageTitle))
-                        whereClausules = "pageTitle = $pageTitle";
+                    {
+                        whereClausules = " pageTitle = $pageTitle";
+                    }
+
                     if (!String.IsNullOrEmpty(ip))
+                    {
+                        if (!String.IsNullOrEmpty(pageTitle))
+                            whereClausules += " AND "; // if both parameters has passed
                         whereClausules += " ip = $ip";
+                    }
 
                     // add "where" if have where clausules
                     if (whereClausules.Length > 0)

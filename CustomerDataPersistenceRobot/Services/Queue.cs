@@ -55,14 +55,14 @@ namespace CustomerDataPersistenceRobot.Services
                         var message = Encoding.UTF8.GetString(body);
 
                         // pass json to a object
-                        JObject objJason = JObject.Parse(message);
+                        JObject objJson = JObject.Parse(message);
                         CustomerNavigation customerNavigation = new CustomerNavigation()
                         {
-                            Date = (DateTime) objJason.GetValue("Date"),
-                            Browser = (String) objJason.GetValue("Browser"),
-                            PageTitle = (String) objJason.GetValue("PageTitle"),
-                            IP = (String) objJason.GetValue("IP"),
-                            Params = (String) objJason.GetValue("Params")
+                            Date = (DateTime) objJson.GetValue("Date"),
+                            Browser = (String) objJson.GetValue("Browser"),
+                            PageTitle = (String) objJson.GetValue("PageTitle"),
+                            IP = (String) objJson.GetValue("IP"),
+                            Params = (String) objJson.GetValue("Params")
                         };
                         Console.WriteLine("* - Received From Queue: {0}", message);
 

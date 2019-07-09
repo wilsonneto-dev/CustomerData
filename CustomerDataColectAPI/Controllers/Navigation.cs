@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
+using CustomerDataColectAPI.Configuration;
 using CustomerDataColectAPI.Models;
 using CustomerDataColectAPI.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -16,6 +18,8 @@ namespace CustomerDataColectAPI.Controllers
     [ApiController]
     public class NavigationController : ControllerBase
     {
+        
+        private AppSettings AppSettings { get; set; }
 
         // GET api/test
         [HttpGet]
