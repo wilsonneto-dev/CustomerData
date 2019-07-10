@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Couchbase;
 using Couchbase.Authentication;
 using Couchbase.N1QL;
-using CustomerDataQueryAPI.Services;
+using CustomerDataQueryAPI.Configuration;
+using CustomerDataQueryAPI.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace CustomerDataQueryAPI.Controllers
 {
@@ -14,12 +16,20 @@ namespace CustomerDataQueryAPI.Controllers
     [ApiController]
     public class NavigationQueryController : ControllerBase
     {
+        private AppSettings AppSettings { get; set; }
+
+        public NavigationQueryController(IOptions<AppSettings> appSettings)
+        {
+            AppSettings = appSettings.Value;
+        }
 
         // GET
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get(String pageTitle = "", String ip = "")
         {
-            var searchResult = CustomerNavigationDB.Search(pageTitle, ip);
+            // execute the search
+            CustomerNavigationDB customerNavigationDB = new CustomerNavigationDB(AppSettings);
+            var searchResult = customerNavigationDB.Search(pageTitle, ip);
             return new JsonResult(searchResult);
         }
 

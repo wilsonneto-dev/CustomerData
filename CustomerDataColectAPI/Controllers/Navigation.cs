@@ -21,6 +21,11 @@ namespace CustomerDataColectAPI.Controllers
         
         private AppSettings AppSettings { get; set; }
 
+        public NavigationController(IOptions<AppSettings> appSettings)
+        {
+            AppSettings = appSettings.Value;
+        }
+
         // GET api/test
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
@@ -38,17 +43,26 @@ namespace CustomerDataColectAPI.Controllers
                 // Fill IP and Date
                 customerNavigation.IP = this.Request.HttpContext.Connection.RemoteIpAddress.ToString();
                 customerNavigation.Date = DateTime.Now;
-                // _context.
 
                 // serialize in JSON
                 String jsonPack = JsonConvert.SerializeObject(customerNavigation);
 
-                // post to queue
-                Queue queue = new Queue();
-                queue.QueuePostJson(jsonPack, "Customer");
+                if(customerNavigation.IsValid())
+                {
+                    // post to queue
+                    Queue queue = new Queue(AppSettings);
+                    queue.QueuePostJson(jsonPack, "Customer");
 
-                // return OK
-                return new JsonResult("Send to queue successfully.");
+                    // return OK
+                    return new JsonResult("Send to queue successfully.");
+
+                }
+                else
+                {
+                    // return Invalid
+                    return new JsonResult("Invalid entry...");
+
+                }
 
             }
             catch (Exception ex)

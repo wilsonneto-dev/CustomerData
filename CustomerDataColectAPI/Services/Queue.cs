@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using CustomerDataColectAPI.Configuration;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
@@ -11,16 +13,23 @@ namespace CustomerDataColectAPI.Services
     // manage queue
     public class Queue
     {
+        private readonly AppSettings AppSettings;
+        public Queue (IOptions<Configuration.AppSettings> settings)
+        {
+            AppSettings = settings.Value;
+        }
+
+        public Queue(AppSettings appSettings)
+        {
+            // app configs
+            AppSettings = appSettings;
+        }
+
         public void QueuePostJson(String jsonCustomerNavigation, String Queue)
         {
             // pass to ConnectionStrings in appsettings.json
-            var factory = new ConnectionFactory()
-            {
-                HostName = "whale-01.rmq.cloudamqp.com",
-                UserName = "yyvswksf",
-                VirtualHost = "yyvswksf",
-                Password = "aw1hZCbj52fN4U--M3yX9NBSjAMx7xLS"
-            };
+            var factory = new ConnectionFactory();
+            factory.Uri = new Uri(AppSettings.RabbitMQConnectionString);
 
             // connect to RabbitMQ
             using (var connection = factory.CreateConnection())

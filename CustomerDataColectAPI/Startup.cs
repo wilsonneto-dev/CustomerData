@@ -30,8 +30,15 @@ namespace CustomerDataColectAPI
             // Config settings
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
-            // CORS for calls by Js
-            services.AddCors();
+            // CORS for calls by Js - allows alls
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -51,7 +58,7 @@ namespace CustomerDataColectAPI
             // app.UseHttpsRedirection();
 
             // enable Cross Origin request
-            app.UseCors(option => option.AllowAnyOrigin());
+            app.UseCors("CorsPolicy");
 
             // start mvc
             app.UseMvc();

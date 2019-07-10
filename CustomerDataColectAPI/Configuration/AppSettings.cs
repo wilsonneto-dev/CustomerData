@@ -7,7 +7,6 @@ namespace CustomerDataColectAPI.Configuration
 {
     public class AppSettings
     {
-        public string DbSQLConnectionString { get; set; }
-        public string DbNoSQLConnectionString { get; set; }
+        public string RabbitMQConnectionString { get; set; }  
     }
 }

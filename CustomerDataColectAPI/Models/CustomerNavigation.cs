@@ -14,5 +14,10 @@ namespace CustomerDataColectAPI.Models
         public String PageTitle { get; set; }
         public String Browser { get; set; }
 
+        public bool IsValid()
+        {
+            // if needed validations
+            return true;
+        }
     }
 }

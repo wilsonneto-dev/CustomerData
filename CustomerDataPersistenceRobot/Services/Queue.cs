@@ -4,8 +4,10 @@ using System.Text;
 using System.Threading;
 using Couchbase;
 using Couchbase.Authentication;
+using CustomerDataPersistenceRobot.Configuration;
 using CustomerDataPersistenceRobot.Context;
 using CustomerDataPersistenceRobot.Models;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
@@ -16,18 +18,24 @@ namespace CustomerDataPersistenceRobot.Services
     // queue manage
     class Queue
     {
-        // consume data
-        public static void QueueStartConsuming()
+        private readonly AppSettings AppSettings;
+        public Queue(IOptions<Configuration.AppSettings> settings)
         {
-            // connection setup to RabbitMQ Server
-            // pass to connection string
-            var factory = new ConnectionFactory()
-            {
-                HostName = "whale-01.rmq.cloudamqp.com",
-                UserName = "yyvswksf",
-                VirtualHost = "yyvswksf",
-                Password = "aw1hZCbj52fN4U--M3yX9NBSjAMx7xLS"
-            };
+            AppSettings = settings.Value;
+        }
+
+        public Queue(AppSettings appSettings)
+        {
+            // app configs
+            AppSettings = appSettings;
+        }
+
+        // consume data
+        public void QueueStartConsuming()
+        {
+            // pass to ConnectionStrings in appsettings.json
+            var factory = new ConnectionFactory();
+            factory.Uri = new Uri(this.AppSettings.RabbitMQConnectionString);
 
             // open connection
             using (var connection = factory.CreateConnection())
@@ -67,38 +75,53 @@ namespace CustomerDataPersistenceRobot.Services
                         Console.WriteLine("* - Received From Queue: {0}", message);
 
                         // save in SqlServer
-                        using (var context = new CustomerDataDbContext())
+                        try
                         {
-                            context.CustomerNavigations.Add(customerNavigation);
-                            context.SaveChanges(); // save
-                        }
-                        Console.WriteLine("- {0}->{1}. Saved in SqlServer. Id: {2}", customerNavigation.IP, customerNavigation.PageTitle, customerNavigation.Id);
-
-                        // save in Couchbase
-                        using (var cluster = new Cluster())
-                        {
-                            // users config
-                            // pass to connectionstrings
-                            var authenticator = new PasswordAuthenticator("user", "user123");
-                            cluster.Authenticate(authenticator);
-
-                            // open bucket
-                            using (var bucket = cluster.OpenBucket("CustomerNavigations"))
+                            using (var context = new CustomerDataDbContext())
                             {
-                                var document = new Document<dynamic>
+                                context.CustomerNavigations.Add(customerNavigation);
+                                context.SaveChanges(); // save
+                            }
+                            Console.WriteLine("- {0}->{1}. Saved in SqlServer. Id: {2}", customerNavigation.IP, customerNavigation.PageTitle, customerNavigation.Id);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("- {0}->{1}. Error * SQL: {2}", customerNavigation.IP, customerNavigation.PageTitle, ex.Message);
+                        }
+
+                        try
+                        {
+                            // save in Couchbase
+                            using (var cluster = new Cluster())
+                            {
+                                // users config
+                                // pass to connectionstrings
+                                var authenticator = new PasswordAuthenticator(AppSettings.NoSqlUser, AppSettings.NoSqlPass);
+                                cluster.Authenticate(authenticator);
+
+                                // open bucket
+                                using (var bucket = cluster.OpenBucket(AppSettings.NoSqlBucket))
                                 {
-                                    Id = "CustomerNavigation::" + customerNavigation.Id,
-                                    Content = customerNavigation
-                                };
-                                // upser in base
-                                var upsert = bucket.Upsert(document);
-                                if (upsert.Success)
-                                    Console.WriteLine("- {0}->{1} Saved in Couchbase. Id: {2}", customerNavigation.IP, customerNavigation.PageTitle, ("CustomerNavigation::" + customerNavigation.Id.ToString()));
-                                else
-                                    Console.WriteLine("- * Error {0} Dont saved in Couchbase. Id: {1}", customerNavigation.IP, ("CustomerNavigation::" + customerNavigation.Id.ToString()));
+                                    var document = new Document<dynamic>
+                                    {
+                                        Id = "CustomerNavigation::" + customerNavigation.Id,
+                                        Content = customerNavigation
+                                    };
+                                    // upser in base
+                                    var upsert = bucket.Upsert(document);
+                                    if (upsert.Success)
+                                        Console.WriteLine("- {0}->{1} Saved in Couchbase. Id: {2}", customerNavigation.IP, customerNavigation.PageTitle, ("CustomerNavigation::" + customerNavigation.Id.ToString()));
+                                    else
+                                        Console.WriteLine("- * Error {0} Dont saved in Couchbase. Id: {1}", customerNavigation.IP, ("CustomerNavigation::" + customerNavigation.Id.ToString()));
+                                }
                             }
                         }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("- {0}->{1}. Error * NoSQL: {2}", customerNavigation.IP, customerNavigation.PageTitle, ex.Message);
+                        }
 
+                        // just log and wait 1 second
                         Console.WriteLine("Go next...");
                         Thread.Sleep(1000);
                     };

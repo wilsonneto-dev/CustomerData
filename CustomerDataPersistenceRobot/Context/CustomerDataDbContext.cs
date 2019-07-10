@@ -15,7 +15,7 @@ namespace CustomerDataPersistenceRobot.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=ViajaNet;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(Program.Settings.SqlConnectionString);
         }
 
     }
