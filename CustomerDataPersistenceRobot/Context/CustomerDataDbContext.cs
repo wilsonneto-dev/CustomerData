@@ -8,8 +8,6 @@ namespace CustomerDataPersistenceRobot.Context
 {
     class CustomerDataDbContext : DbContext
     {
-        // public CustomerDataDbContext(DbContextOptions<CustomerDataDbContext> options) : base(options)
-        // {}
 
         public DbSet<CustomerNavigation> CustomerNavigations { get; set; }
 

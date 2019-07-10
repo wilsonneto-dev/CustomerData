@@ -7,6 +7,7 @@ using Couchbase.Authentication;
 using CustomerDataPersistenceRobot.Configuration;
 using CustomerDataPersistenceRobot.Context;
 using CustomerDataPersistenceRobot.Models;
+using CustomerDataPersistenceRobot.Repository;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -74,14 +75,12 @@ namespace CustomerDataPersistenceRobot.Services
                         };
                         Console.WriteLine("* - Received From Queue: {0}", message);
 
+                        CustomerNavigationRepository repo = new CustomerNavigationRepository(AppSettings);
+
                         // save in SqlServer
                         try
                         {
-                            using (var context = new CustomerDataDbContext())
-                            {
-                                context.CustomerNavigations.Add(customerNavigation);
-                                context.SaveChanges(); // save
-                            }
+                            repo.AddSql(customerNavigation);
                             Console.WriteLine("- {0}->{1}. Saved in SqlServer. Id: {2}", customerNavigation.IP, customerNavigation.PageTitle, customerNavigation.Id);
                         }
                         catch (Exception ex)
@@ -89,32 +88,11 @@ namespace CustomerDataPersistenceRobot.Services
                             Console.WriteLine("- {0}->{1}. Error * SQL: {2}", customerNavigation.IP, customerNavigation.PageTitle, ex.Message);
                         }
 
+                        // save in NoSql
                         try
                         {
-                            // save in Couchbase
-                            using (var cluster = new Cluster())
-                            {
-                                // users config
-                                // pass to connectionstrings
-                                var authenticator = new PasswordAuthenticator(AppSettings.NoSqlUser, AppSettings.NoSqlPass);
-                                cluster.Authenticate(authenticator);
-
-                                // open bucket
-                                using (var bucket = cluster.OpenBucket(AppSettings.NoSqlBucket))
-                                {
-                                    var document = new Document<dynamic>
-                                    {
-                                        Id = "CustomerNavigation::" + customerNavigation.Id,
-                                        Content = customerNavigation
-                                    };
-                                    // upser in base
-                                    var upsert = bucket.Upsert(document);
-                                    if (upsert.Success)
-                                        Console.WriteLine("- {0}->{1} Saved in Couchbase. Id: {2}", customerNavigation.IP, customerNavigation.PageTitle, ("CustomerNavigation::" + customerNavigation.Id.ToString()));
-                                    else
-                                        Console.WriteLine("- * Error {0} Dont saved in Couchbase. Id: {1}", customerNavigation.IP, ("CustomerNavigation::" + customerNavigation.Id.ToString()));
-                                }
-                            }
+                            repo.AddNoSql(customerNavigation);
+                            Console.WriteLine("- {0}->{1} Saved in Couchbase. Id: {2}", customerNavigation.IP, customerNavigation.PageTitle, ("CustomerNavigation::" + customerNavigation.Id.ToString()));
                         }
                         catch (Exception ex)
                         {

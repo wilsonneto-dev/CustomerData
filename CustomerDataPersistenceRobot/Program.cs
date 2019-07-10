@@ -29,6 +29,7 @@ namespace CustomerDataPersistenceRobot
 
             // wait for user
             Console.WriteLine("Press [enter] to start.");
+            Console.ReadLine();
             Console.WriteLine("Ok...");
 
             // initialize queue  consuming
